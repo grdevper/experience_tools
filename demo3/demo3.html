@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>will-change</title>
+</head>
+<style type="text/css">
+    .test {
+        /* style rules */
+        transition: transform 1s ease-out;
+    }
+    .test:hover {
+        will-change: transform;
+    }
+    .test:active {
+        transform: rotateY(180deg);
+    }
+</style>
+<body>
+<div class="test">测试</div>
+</body>
+</html>
