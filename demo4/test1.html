@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>面向对象</title>
+</head>
+<script type="text/javascript" src="interface.js"/>
+<body>
+
+</body>
+<script type="text/javascript">
+  /*function Person(){
+  }
+    Person.prototype.name = "Nicholas";
+    Person.prototype.age = 29;
+    Person.prototype.job = "Software Engineer";
+    Person.prototype.sayName = function(){
+      alert(this.name);
+  };
+  var person1 = new Person();
+  var person2 = new Person();
+  person1.name = "Greg";
+  alert(person1.name);
+  alert(person2.name);
+  /!**
+  * 删除对象上覆盖的原型链上的同名的值后会
+  * 原来连上的值，hasOwnProperty可以访问实例属性
+  * *!/
+  delete person1.name;
+  alert(person1.name);
+  /!**
+  * 判断属性是在对象中还是在原型链中
+  * *!/
+  function hasPrototypeProperty(object, name){
+    return !object.hasOwnProperty(name) && (name in object);
+  }
+  /!**
+  * 实例中的指针指向原型，而不是构造函数，
+  * 初始化对象以后，重写原型链，访问属性会导致报错
+  * *!/
+  function Person(){
+  }
+  var friend = new Person();
+  Person.prototype = {
+    constructor: Person,
+    name : "Nicholas",
+    age : 29,
+    job : "Software Engineer",
+    sayName : function () {
+      alert(this.name);
+    }
+  };
+  friend.sayName();   // error
+  /!**
+  * 原型对象对于引用类型的数组共享原型链有问题，
+  * 修改该属性后其所有对象的该属性都会改变
+  * *!/
+  function Person(){
+  }
+  Person.prototype = {
+    constructor: Person,
+    name : "Nicholas",
+    age : 29,
+    job : "Software Engineer",
+    friends : ["Shelby", "Court"],
+    sayName : function () {
+      alert(this.name);
+    } };
+  var person1 = new Person();
+  var person2 = new Person();
+  person1.friends.push("Van");
+  alert(person1.friends);    //"Shelby,Court,Van"
+  alert(person2.friends);    //"Shelby,Court,Van"
+  alert(person1.friends === person2.friends);  //true
+  /!**
+  * 组合模式可以
+  * *!/
+  function Person(name, age, job){
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.friends = ["Shelby", "Court"];
+  }
+  Person.prototype = {
+    constructor : Person, //构造函数  Person
+    sayName : function(){
+      alert(this.name);
+    }
+  }
+  var person1 = new Person("Nicholas", 29, "Software Engineer");
+  var person2 = new Person("Greg", 27, "Doctor");
+  person1.friends.push("Van");
+  alert(person1.friends);    //"Shelby,Count,Van"
+  alert(person2.friends);    //"Shelby,Count"
+  alert(person1.friends === person2.friends); //false
+  alert(person1.sayName === person2.sayName);  //true
+  /!**
+  * 寄生构造函数模式
+  * 即构造函数内部创建对象，并参数赋给其属性，并返回其对象
+  * *!/
+  function Person(name, age, job){
+    var o = new Object();
+    o.name = name;
+    o.age = age;
+    o.job = job;
+    o.sayName = function(){
+      alert(this.name);
+    };
+    return o; }
+  var friend = new Person("Nicholas", 29, "Software Engineer");
+  friend.sayName();  //"Nicholas"
+  /!**
+  * 稳妥构造函数
+  * 相比寄生构造函数来说，没有其属性，
+  * 只能通过指定的方法来访问其属性
+  * *!/
+  function Person(name, age, job) {
+    //创建要返回的对象
+    var o = new Object();
+    o.sayName = function(){
+      alert(name);
+    };
+    //返回对象
+    return o;
+  }*/
+</script>
+</html>
