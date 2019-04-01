@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>函数表达式</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+    /*function createFunctions1(){
+        var result = new Array();
+        for (var i=0; i < 10; i++){
+            result[i] = function(){
+                return i;
+            };
+        }
+        return result;
+    }
+    function createFunctions2() {
+        var result = new Array();
+        for (var i = 0; i < 10; i++) {
+            result[i] = function(num) {
+                return function() {
+                    return num;
+                }
+            }(i)
+        }
+        return result;
+    }
+    console.log(createFunctions1()[8]());  // 10
+    console.log(createFunctions2()[8]()); //8 闭包*/
+    /**
+    * 当函数被作为某个对象的方法调用时，this 等于那个对象， 但是，
+    * 匿名函数的执行环境具有全局性，因此其 this 对象通常指向 window1
+    * */
+   /* var name = "The Window";
+    var object = {
+        name : "My Object",
+        getNameFunc : function(){
+            return function(){
+                return this.name;
+            };
+        } };
+    console.log(object.getNameFunc()()); *///"The Window"(在非严格模式下)
+    /**
+    * 活动对象
+    * */
+   /* function outputNumbers(count){
+        for (var i=0; i < count; i++){
+            console.log(i);
+        }
+        console.log('==============>');
+        console.log(i); //是可以访问的，for循环里面的i是属于函数的活动对象的。。。。
+    }
+    outputNumbers(5);*/
+
+    /*function outputNumbers(count){
+        for (var i=0; i < count; i++){
+            console.log(i);
+        }
+        console.log('============>');
+        var i; //重新声明变量
+        console.log(i);
+    }
+    outputNumbers(4); //4*/
+
+    /**
+    * 而函 数声明后面不能跟圆括号。然而，函数表达式的后面可以跟圆括号
+    * */
+   var a = function(num) {
+        console.log(num);
+    }(5)
+
+    ;(function (num) {     //上面有表达式或者声明时加上分号，不然会看成一起的，会报错。
+        console.log(num);
+    })(4)
+
+    /**
+    * 私有作用域，好处可以减少闭包消耗内存的情况，函数执行完毕后，就会立即销毁，
+    * 避免命名冲突
+    * */
+
+    function outputNumbers(count){
+        (function () {
+            for (var i=0; i < count; i++){
+                alert(i);
+            }
+        })();
+        alert(i); //导致一个错误!
+    }
+</script>
+</html>
