@@ -11,3 +11,5 @@
  function a(){};
 2. 函数表达式
 var a = function() {}
+
+### es7+es8新特性 demo6

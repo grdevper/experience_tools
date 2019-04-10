@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>es7+es8</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+   /* /!**
+    * includes 查找一个值是否在数组里面 和indexOf>-1差不多
+    * 只能判断简单类型的数据，对于复杂类型的数据不能判断比如二维数组
+    * *!/
+    ['a', 'b', 'c'].includes('a'); //true
+    ['a', 'b', 'c'].includes('d'); //false
+
+    //2个参数，搜索的从开始的索引中是否你包含搜索的值
+    ['a', 'b', 'c', 'd'].includes('b', 1)      // true
+    ['a', 'b', 'c', 'd'].includes('b', 2)      // false
+
+    //在判断 +0 与 -0 时，被认为是相同的。
+    [1, +0, 3, 4].includes(-0)    //true
+    [1, +0, 3, 4].indexOf(-0)     //1
+    //精确性，对NAN的处理不一样
+    let demo = [1, NaN, 2, 3]
+    demo.indexOf(NaN)        //-1
+    demo.includes(NaN)       //true
+
+    /!**
+    * 求幂运算符
+    * *!/
+    console.log(3 ** 2);  //9
+    console.log(Math.pow(3, 2)); //9
+
+    var b = 3;
+    b **= 2;  //+= 差不多
+    console.log(b); //9
+
+    /!**
+    * Object.entries()
+    * 将一个对象中可枚举属性的键名和键值按照二维数组的方式返回。
+    *若对象是数组，则会将数组的下标作为键值返回。
+    * *!/
+    Object.entries({ one: 1, two: 2 });    //[['one', 1], ['two', 2]]
+    Object.entries([1, 2]);                //[['0', 1], ['1', 2]]
+    //键值对中，如果键的值是Symbol，编译时将会被忽略。例如
+    Object.entries({ [Symbol()]: 1, two: 2 })       //[['two', 2]]
+    //对象的key值是数字时，返回值会对key值进行排序，返回的是排序后的结果
+    Object.entries({ 3: 'a', 4: 'b', 1: 'c' })    //[['1', 'c'], ['3', 'a'], ['4', 'b']]
+    /!**
+    * 遍历对象属性
+    * *!/
+    let obj = { one: 1, two: 2 };
+    for (let [k,v] of Object.entries(obj)) {
+        console.log(`${JSON.stringify(k)}: ${JSON.stringify(v)}`);
+    } // 'one' : 1, 'two' : 2,
+
+    /!**
+    * Object.values() 返回键值对中的属性值，且返回的顺序和Object.entries()一致
+    * *!/
+    Object.values({ 3: 'a', 4: 'b', 1: 'c' })    //['c', 'a', 'b']
+
+    /!**
+     * es8
+    * 字符串填充：padStart和padEnd, padStart函数通过填充字符串的首部来保证字符串达到固定的长度，
+    * 反之，padEnd是填充字符串的尾部来保证字符串的长度的,长度不够，默认用空格补位
+    * *!/
+    'Vue'.padStart(10)           //'       Vue'
+    'React'.padStart(10)         //'     React'
+    'JavaScript'.padStart(10)    //'JavaScript'
+
+    /!**
+    * Object.getOwnPropertyDescriptors()
+     * 该方法会返回目标对象中所有属性的属性描述符，该属性必须是对象自己定义的，不能是从原型链继承来的
+    * *!/
+    let obj = {
+        id: 1,
+        name: 'test',
+        get gender() {
+            console.log('gender')
+        },
+        set grade(g) {
+            console.log(g)
+        }
+    }
+    Object.getOwnPropertyDescriptors(obj)
+*/
+    /**
+    * Object.getOwnPropertyDescriptors方法配合Object.defineProperties方法，
+     * 就可以实现正确拷贝。和object.assign的区别，前面一种可以拷贝get set方法，后面一种只可以拷贝属性
+    * */
+    let obj = {
+        id: 1,
+        name: 'test',
+        get gender() {
+            console.log('gender')
+        },
+        a: function() {
+          console.log(1)
+        }
+    }
+    //let b = Object.assign(obj);
+
+    let obj1 = {};
+    Object.defineProperties(obj1, Object.getOwnPropertyDescriptors(obj))
+    Object.getOwnPropertyDescriptors(obj1)
+    //console.log(b);
+    console.log(Object.getOwnPropertyDescriptors(obj1));
+</script>
+</html>
