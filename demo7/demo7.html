@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>flow</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+  "foo" + {} // "foo[object, object]"
+
+  //@flow
+  "foo" + {};    // Error!
+  "foo" + String({});     // Works!
+</script>
+</html>

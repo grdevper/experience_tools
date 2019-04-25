@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>vue双向绑定</title>
+</head>
+<body>
+<div id="app">
+  <form>
+    <input type="text" v-model="number">
+    <button type="button" v-click="increment">增加</button>
+  </form>
+  <h3 v-bind="number"></h3>
+  <h3 v-bind="number"></h3>
+  <h3 v-bind="test"></h3>
+</div>
+</body>
+<script type="text/javascript">
+  function vue(options) {
+    this._init(options);
+  }
+  vue.prototype._init = function (options) {
+    this.$options = options;
+    this.$el = document.querySelector(options.el);
+    this.$data = options.data;
+    this.$methods = options.methods;
+
+    this._binding = {};
+    this._observe(this.$data);
+    this._compile(this.$el);
+  }
+
+  vue.prototype._observe = function (obj) {
+    var value;
+    var defineObj = {};
+    for (key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        this._binding[key] = {
+          _directives: []
+        };
+        value = obj[key];
+        if (typeof value === 'object') {
+          this._observe(value);
+        }
+        console.log(this.$data);
+        var binding = this._binding[key];
+        defineObj[key] = {
+          enumerable: true,
+          configurable: true,
+          get: function () {
+            return value;
+          },
+          set: function (newVal) {
+            if (value !== newVal) {
+              value = newVal;
+              binding._directives.forEach(function (item) {
+                item.update();
+              })
+            }
+          }
+        }
+      }
+    }
+    //监听data对象是否变化
+    Object.defineProperties(this.$data, defineObj)
+  };
+
+  vue.prototype._compile = function (root) {
+    var _this = this;
+    var nodes = root.children;
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      if (node.children.length) {
+        this._compile(node);
+      }
+
+      if (node.hasAttribute('v-click')) {
+        node.onclick = (function (key) {
+          var attrVal = nodes[key].getAttribute('v-click');
+          return _this.$methods[attrVal].bind(_this.$data);
+        })(i);
+      }
+
+      if (node.hasAttribute('v-model') && (
+        node.tagName == 'INPUT' ||
+        node.tagName == 'TEXTAREA')) {
+        node.addEventListener('input', (function (key) {
+          var attrVal = node.getAttribute('v-model');
+          _this._binding[attrVal]._directives.push(
+            new Watcher(
+              'input',
+              node,
+              _this,
+              attrVal,
+              'value'
+            )
+          );
+
+          return function () {
+            _this.$data[attrVal] = nodes[key].value;
+          }
+        })(i));
+      }
+
+      if(node.hasAttribute('v-bind')) {
+        var attrVal = node.getAttribute('v-bind');
+        _this._binding[attrVal]._directives.push(
+          new Watcher(
+            'text',
+            node,
+            _this,
+            attrVal,
+            'innerHTML'
+          )
+        );
+      }
+
+    }
+  };
+
+  function Watcher(name, el, vm, exp, attr) {
+    this.name = name; //指令名称，例如文本节点，该值设为"text
+    this.el = el; //对应的dom
+    this.vm = vm; //对应的实例
+    this.exp = exp; //对应的值
+    this.attr = attr; //属性值
+
+    this.update();
+  }
+
+  Watcher.prototype.update = function () {
+    this.el[this.attr] = this.vm.$data[this.exp];
+  };
+
+  window.onload = function () {
+    var app = new vue({
+      el: '#app',
+      data: {
+        test: 0,
+        number: 1,
+      },
+      methods: {
+        increment: function () {
+          this.number ++;
+        }
+      }
+    })
+  }
+</script>
+</html>
