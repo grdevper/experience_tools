@@ -9,8 +9,8 @@
   <form>
     <input type="text" v-model="number">
     <button type="button" v-click="increment">增加</button>
+    <button type="button" v-click="reduce">减少</button>
   </form>
-  <h3 v-bind="number"></h3>
   <h3 v-bind="number"></h3>
   <h3 v-bind="test"></h3>
 </div>
@@ -28,11 +28,10 @@
     this._binding = {};
     this._observe(this.$data);
     this._compile(this.$el);
-  }
+  };
 
   vue.prototype._observe = function (obj) {
     var value;
-    var defineObj = {};
     for (key in obj) {
       if (obj.hasOwnProperty(key)) {
         this._binding[key] = {
@@ -42,27 +41,27 @@
         if (typeof value === 'object') {
           this._observe(value);
         }
-        console.log(this.$data);
-        var binding = this._binding[key];
-        defineObj[key] = {
-          enumerable: true,
-          configurable: true,
-          get: function () {
-            return value;
-          },
-          set: function (newVal) {
-            if (value !== newVal) {
-              value = newVal;
-              binding._directives.forEach(function (item) {
-                item.update();
-              })
+        var _this = this;
+        (function (key, value) {
+          var binding = _this._binding[key];
+          Object.defineProperty(_this.$data, key, {
+            enumerable: true,
+            configurable: true,
+            get: function () {
+              return value;
+            },
+            set: function (newVal) {
+              if (value !== newVal) {
+                value = newVal;
+                binding._directives.forEach(function (item) {
+                  item.update();
+                })
+              }
             }
-          }
-        }
+          })
+        })(key, value)
       }
     }
-    //监听data对象是否变化
-    Object.defineProperties(this.$data, defineObj)
   };
 
   vue.prototype._compile = function (root) {
@@ -142,6 +141,9 @@
       methods: {
         increment: function () {
           this.number ++;
+        },
+        reduce: function () {
+          this.test --;
         }
       }
     })

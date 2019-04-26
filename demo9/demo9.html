@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>defineproperties</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+  var book = {
+    _year: 2004,
+    edition: 1,
+  };
+  Object.defineProperties(book,{
+    _year:{
+      configurable: true,
+      enumerable: true,
+    },
+    edition:{
+      configurable: true,
+      enumerable: true,
+    },year:{    //定义访问器属性
+      get :function(){
+        return this._year;
+      },
+      set: function(newValue){
+        console.log('----------11111');
+        if(newValue>2004){
+          this._year = newValue;
+          this.edition += newValue -2004;
+        }
+      }
+    }
+  })
+
+  /*Object.defineProperties(book,{
+    _year:{
+      configurable: true,
+      enumerable: true,
+      get :function(){
+        return value;
+      },
+      set: function(newValue){
+        if(newValue>2004){
+          value = newValue;
+        }
+      }
+    },
+    edition:{
+      configurable: true,
+      enumerable: true,
+      get :function(){
+        return value;
+      },
+      set: function(newValue){
+        if(newValue>2004){
+          value = newValue;
+        }
+      }
+    }
+  })*/
+  console.log(book);
+  book._year = 2008;
+  console.log(book);
+  book.year = 2009;
+</script>
+</html>
