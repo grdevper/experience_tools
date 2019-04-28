@@ -13,3 +13,9 @@
 var a = function() {}
 
 ### es7+es8新特性 demo6
+
+### vue双向绑定
+
+### defineProperties
+
+### promise

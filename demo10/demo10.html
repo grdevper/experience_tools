@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>promise</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+  const isFunction = variable => typeof variable === 'function';
+  const PENDING = 'PENDING';
+  const FULFILLED = 'FULFILLED';
+  const REJECTED = 'REJECTED';
+
+  class MyPromise {
+    constructor(handle) {
+      if (!isFunction(handle)) {
+        throw new Error('Promise must accept a function as a parameter');
+      }
+      //状态
+      this._status = PENDING;
+
+      this._value = undefined;
+
+      //成功回掉函数队列
+      this._fulfilledQueues = [];
+
+      //失败回掉函数队列
+      this._rejectedQueues = [];
+
+      //注入resolve，reject
+      try {
+        handle(this._resolve.bind(this), this._reject.bind(this));
+      } catch (e) {
+        this._reject(e);
+      }
+    }
+
+    _resolve(val) {
+        const run = () => {
+          if (this._status !== PENDING) return;
+          this._status = FULFILLED;
+          //依次执行成功队列里面的函数，并清空队列
+          const runFulfilled = (value) => {
+              let cb;
+              while (cb = this._fulfilledQueues.shift()) {
+                  cb(value);
+              }
+          };
+
+          //依次执行失败队列里面的函数，并清空队列
+          const runRejected = (value) => {
+              let cb;
+              while (cb = this._rejectedQueues.shift()) {
+                  cb(value);
+              }
+          };
+
+          if (val instanceof MyPromise) {
+            val.then(value => {
+              this._value = value;
+              runFulfilled(value);
+            }, err => {
+              this._value = value;
+              runRejected(err);
+            })
+          } else {
+            this._value = val;
+            runFulfilled(val);
+          }
+      };
+      //之所以要异步，保证在同步方法的时候，
+      //在_fulfilledQueues队列添加所有的方法之后执行；
+      setTimeout(run, 0);
+    }
+
+    _reject(err) {
+      if (this._status !== PENDING) return;
+      const run = () => {
+        this._status = REJECTED;
+        this._value = err;
+        let cb;
+        while (cb = this._rejectedQueues.shift()) {
+          cb(err);
+        }
+      };
+      setTimeout(run, 0);
+    }
+     //then 重新new Promise 对象
+    then(onFulfilled, onRejected) {
+      const {_status, value} = this;
+      return new MyPromise((onFulfilledNext, onRejectedNext) => {
+          let fulfilled = value => {
+          try {
+            if (!isFunction(onFulfilled)) {
+              onFulfilledNext(value);
+            } else {
+              let res = onFulfilled(value);
+              if (res instanceof MyPromise) {
+                res.then(onFulfilledNext, onRejectedNext);
+              } else {
+                onFulfilledNext(res);
+              }
+            }
+          } catch (e) {
+            onRejectedNext(e);
+          }
+        };
+
+        let rejected = error => {
+          try {
+            if (!isFunction(onRejected)) {
+              onRejectedNext(error);
+            } else {
+              let res = onRejected(error);
+              if (res instanceof MyPromise) {
+                res.then(onFulfilledNext, onRejectedNext);
+              } else {
+                onFulfilledNext(res); //todo
+              }
+            }
+          } catch(err) {
+            onRejectedNext(err);
+          }
+        };
+        
+        switch (_status) {
+          case PENDING:
+            this._fulfilledQueues.push(fulfilled);
+            this._rejectedQueues.push(rejected);
+            break;
+          case FULFILLED:
+            fulfilled(value);
+            break;
+          case REJECTED:
+            rejected(value);
+            break;
+        }
+      })
+    }
+
+    catch (onRejected) {
+      return this.then(undefined, onRejected);
+    }
+
+    static resolve (value) {
+      if (value instanceof MyPromise) {
+        return value
+      }
+      return new MyPromise(resolve => resolve(value));
+    }
+
+    static reject (value) {
+      return new MyPromise((resolve, reject) => reject(value));
+    }
+
+    static all(list) {
+      return new MyPromise((resolve, reject) => {
+        let values = [];
+        let count = 0;
+        for(let [i, p] of list.entries()) {
+           this.resolve(p).then(res => {
+             values[i] = res;
+             count ++;
+             if (count === list.length) resolve(values);
+           }, err => {
+             reject(err);
+           })
+        }
+      })
+    }
+
+    static race(list) {
+      return new MyPromise((resolve, reject) => {
+        for (let p of list) {
+          this.resolve(p).then(res => {
+            resolve(res);
+          }, err => {
+            reject(err);
+          })
+        }
+      })
+    }
+
+    //finally 最后执行后，后面还有then是取的上一层then的值
+    finally (cb) {
+      return this.then(
+        value => MyPromise.resolve(cb()).then(() => value),
+        reason => MyPromise.resolve(cb()).then(() => {throw reason})
+      );
+    }
+  }
+
+  function a() {
+    return MyPromise.resolve('aaaaaa').then((a)=> {
+        return a+'1'
+    }).then((a) => {
+        console.log(a);
+        return a + '2' ;
+    });
+  }
+
+  a();
+
+  function b() {
+      return Promise.resolve('bbbbb').then((a)=> {
+          console.log(a);
+          return Promise.resolve(a+'1');
+      }).then((a) => {
+          console.log(a);
+          return Promise.resolve(a+'2');
+      }).then((a) => {
+          console.log(a);
+          return Promise.resolve(a+'3');
+      }).then((a) => {
+          console.log(a);
+          return Promise.resolve(a+'4');
+      }).finally(() => {
+          return Promise.resolve('aa')
+      }).then((a)=> {
+          console.log(a);
+      });
+  }
+
+  //new Promise(b);
+</script>
+</html>
