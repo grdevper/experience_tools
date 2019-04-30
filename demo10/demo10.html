@@ -76,12 +76,15 @@
     }
 
     _reject(err) {
+
       if (this._status !== PENDING) return;
       const run = () => {
+          console.log(10111, this._status);
         this._status = REJECTED;
         this._value = err;
         let cb;
         while (cb = this._rejectedQueues.shift()) {
+            console.log(111);
           cb(err);
         }
       };
@@ -109,8 +112,10 @@
         };
 
         let rejected = error => {
+            console.log(1111876,onRejected);
           try {
             if (!isFunction(onRejected)) {
+                console.log(119999);
               onRejectedNext(error);
             } else {
               let res = onRejected(error);
@@ -124,7 +129,7 @@
             onRejectedNext(err);
           }
         };
-        
+        console.log('2567', _status);
         switch (_status) {
           case PENDING:
             this._fulfilledQueues.push(fulfilled);
@@ -201,7 +206,31 @@
     });
   }
 
-  a();
+
+  /**
+  * reject的时候，如果注册的then方法中有reject方法，
+  * 会在下个reject方法中执行，下个reject返回的是个resolve就在下个resolve中执行，否则执行在reject,
+  * 最后被catch捕获。
+  * */
+  function c() {
+    return new MyPromise((resolve, reject) => {
+        reject('111111'); //
+        console.log('kaishi');
+    }).then((a)=>{
+       console.log(a)
+    }).then((m)=> {
+        console.log(m);
+    }, (c) => {
+        console.log(3333);
+        return c;
+    }).then((q)=> {
+        console.log(q);
+    }).catch((a)=> {
+
+    })
+  }
+
+  c();
 
   function b() {
       return Promise.resolve('bbbbb').then((a)=> {
