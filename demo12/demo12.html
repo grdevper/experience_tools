@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数组, 对象</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+   const a1 = [1, 2];
+   const a2 = a1.concat();
+   console.log(a2);
+
+   //es6
+   const a3 = [1, 2];
+   // 写法一
+   const a4 = [...a3];
+   // 写法二
+  // const [...a4] = a3;
+  console.log(a4);
+
+  //合并 es5 都是浅拷贝
+  const arr1 = ['a', 'b'];
+  const arr2 = ['c'];
+  const arr3 = ['d', 'e', 'f'];
+  const m = arr1.concat(arr2, arr3);
+  console.log(m);
+
+  //es6
+  console.log([...arr1, ...arr2, ...arr3]);
+
+  //array.from
+   let arrayLike = {
+     '0': 'a',
+     '1': 'b',
+     '2': 'c',
+     length: 3
+   };
+
+   //本质Symbol.iterator）
+   //console.log([...arrayLike]);
+
+   //具有length属性
+   Array.from(arrayLike);
+
+   //等同于
+   [].slice.call(arrayLike);
+
+   console.log( Array.from(arrayLike));
+
+   //支持第二个参数，filter
+   Array.from([1, , 2, , 3], (n) => n || 0)
+
+  //Array.of 将一组值转化为数组
+
+  //copyWithin修改当前数组
+
+  //find findIndex： //返会符合条件的值和下标
+
+  console.log(['a', 'b'].keys());
+
+   for (let [index, elem] of ['a', 'b'].entries()) {
+     console.log(index, elem);
+   }
+
+   //flat flatMap 将数组转换成你需要的几维数， flatMap操作数组元素
+
+   //forEach(), filter(), reduce(), every() 和some()都会跳过空位。
+   //map()会跳过空位，但会保留这个值
+   //join()和toString()会将空位视为undefined，而undefined和null会被处理成空字符串
+
+  /**
+  * 对象操作
+  * */
+ // ES6 允许字面量定义对象时，用方法二（表达式）作为对象的属性名，即把表达式放在方括号内。
+  let key = 'foo';
+  let obj = {
+    [key]: 'a1',
+    ['m' + 'n']: 1,
+  }
+  console.log(obj);
+
+  /**
+  *对象新增方法
+  * */
+
+  //Object.is 比较
+  console.log(+0 === -0);
+  console.log(NaN === NaN);
+
+  console.log(Object.is(+0, -0));
+  console.log(Object.is(NaN, NaN));
+
+  //Object.assign 对象合并,浅拷贝，数组处理会把数组处理为对象
+  const target = {a:1};
+  const source1 = {b:2};
+  const source2 = {c:3};
+  Object.assign(target, source1, source2);
+  console.log(target);
+
+  //Object.fromEntries() 是object.entries的逆操作，用于将键值对数组转为对象。
+  //该方法的一个用处是配合URLSearchParams对象，将查询字符串转为对象
+   Object.fromEntries(new URLSearchParams('foo=bar&baz=qux'));
+
+   /**
+   * symbol
+   * */
+   Symbol.for("bar") === Symbol.for("bar")
+   // true
+
+   Symbol("bar") === Symbol("bar")
+
+   //Symbol.isConcatSpreadable contact时是否展开
+   /*let obj = {length: 2, 0: 'c', 1: 'd'};
+   obj[Symbol.isConcatSpreadable] = true;
+   ['a', 'b'].concat(obj, 'e')*/
+
+  //set函数接受一个数组或者具有iterable接口的数据结构作为参数
+   const set = new Set([1, 2, 3, 4, 4]);
+   console.log(set);
+   console.log([...set]);
+
+   //set实现并集，交集，差集
+   let a = new Set([1, 2, 3]);
+   let b = new Set([4, 3, 2]);
+
+   // 并集
+   let union = new Set([...a, ...b]);
+   // Set {1, 2, 3, 4}
+
+   // 交集
+   let intersect = new Set([...a].filter(x => b.has(x)));
+   // set {2, 3}
+
+   // 差集
+   let difference = new Set([...a].filter(x => !b.has(x)));
+
+   /**
+   * proxy
+   * */
+   var proxy = new Proxy({}, {
+     get: function(target, property) {
+       return 35;
+     }
+   });
+
+   const obja = Object.create(proxy);
+   console.log(obja);
+   obja.time // 35
+
+    //同一个拦截器函数，可以设置拦截多个操作,
+   // apply(target, object, args)：拦截 Proxy 实例作为函数调用的操作，比如proxy(...args)、proxy.call(object, ...args)、proxy.apply(...)。
+   var handler = {
+     get: function(target, name) {
+       if (name === 'prototype') {
+         return Object.prototype;
+       }
+       return 'Hello, ' + name;
+     },
+
+     apply: function(target, thisBinding, args) {
+       return args[0];
+     },
+
+     construct: function(target, args) {
+       return {value: args[1]};
+     }
+   };
+
+   var fproxy = new Proxy(function(x, y) {
+     return x + y;
+   }, handler);
+
+   fproxy(1, 2) // 1
+   new fproxy(1, 2) // {value: 2}
+   fproxy.prototype === Object.prototype // true
+   fproxy.foo === "Hello, foo" // true
+
+   //注意，严格模式下，set代理如果没有返回true，就会报错
+   'use strict';
+   const handler = {
+     set: function(obj, prop, value, receiver) {
+       obj[prop] = receiver;
+       // 无论有没有下面这一行，都会报错
+       return false;
+     }
+   };
+   const proxy = new Proxy({}, handler);
+   proxy.foo = 'bar';
+
+   /**
+   * construct:construct方法用于拦截new命令，下面是拦截对象的写法。
+   * */
+   var handler = {
+     construct (target, args, newTarget) {
+       return new target(...args);
+     }
+   };
+
+   /**
+   * reflect获取对象语言内部的方法，即原有的方法
+   * */
+
+   //如果name属性设置了赋值函数，则赋值函数的this绑定receiver。
+   var myObject = {
+       foo: 4,
+       set bar(value) {
+         return this.foo = value;
+       },
+     };
+
+   var myReceiverObject = {
+     foo: 0,
+   };
+
+   Reflect.set(myObject, 'bar', 1, myReceiverObject);
+   myObject.foo // 4
+   myReceiverObject.foo // 1
+
+  /**
+  * iterator
+  * */
+
+  //类数组对象
+  let iterable = {
+      0: 'a',
+      1: 'b',
+      2: 'c',
+      length: 3,
+      [Symbol.iterator]: Array.prototype[Symbol.iterator]
+    };
+   for (let item of iterable) {
+     console.log(item); // 'a', 'b', 'c'
+   }
+   //普通对象数组
+   let iterable = {
+     a: 'a',
+     b: 'b',
+     c: 'c',
+     length: 3,
+     [Symbol.iterator]: Array.prototype[Symbol.iterator]
+   };
+   for (let item of iterable) {
+     console.log(item); // undefined, undefined, undefined
+   }
+
+   /**
+   * class
+   * */
+
+   //es5
+  function Point(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+  Point.prototype.toString = function () { // 1
+    console.log(this.x, this.y);
+  };
+
+  //es6
+  class Point {
+    constructor(x, y){
+      this.x = x;
+      this.y = y;
+    }
+    toString() { //等同于1
+      console.log(this.x, this.y);
+    }
+  }
+
+  //Object.assign方法可以很方便地一次向类添加多个方法
+   class Point {
+     constructor(){
+       // ...
+     }
+   }
+
+   Object.assign(Point.prototype, {
+     toString(){},
+     toValue(){}
+   });
+
+  Point.prototype.constructor === Point //true
+
+  //es6类的内部所有定义的方法，都是不可枚举的
+   class Point {
+     constructor(x, y) {
+       // ...
+     }
+
+     toString() {
+       // ...
+     }
+   }
+
+   Object.keys(Point.prototype)
+   // []
+   Object.getOwnPropertyNames(Point.prototype)
+
+  //es5是可以枚举的
+   var Point = function (x, y) {
+     // ...
+   };
+
+   Point.prototype.toString = function() {
+     // ...
+   };
+
+   Object.keys(Point.prototype)
+   // ["toString"]
+   Object.getOwnPropertyNames(Point.prototype)
+   // ["constructor","toString"]
+
+  //constructor默认返回实例对象this
+
+
+  //实例的属性除非显式定义在其本身（即定义在this对象上），否则都是定义在原型上（即定义在class上）
+   //定义类
+   class Point {
+
+     constructor(x, y) {
+       this.x = x;
+       this.y = y;
+     }
+
+     toString() {
+       return '(' + this.x + ', ' + this.y + ')';
+     }
+
+   }
+
+   var point = new Point(2, 3);
+
+   point.toString() // (2, 3)
+
+   point.hasOwnProperty('x') // true
+   point.hasOwnProperty('y') // true
+   point.hasOwnProperty('toString') // false
+   point.__proto__.hasOwnProperty('toString') // true
+
+  //.与 ES5 一样，类的所有实例共享一个原型对象。
+   var p1 = new Point(2,3);
+   var p2 = new Point(3,2);
+
+   p1.__proto__ === p2.__proto__ //true
+
+   //实例的__proto__属性为“类”添加方法,这是各大厂商自己添加的私有属性，
+   //我们可以通过Object.getPrototypeOf 方法来获取实例对象的原型，避免耦合。
+   var p1 = new Point(2,3);
+   var p2 = new Point(3,2);
+
+   p1.__proto__.printName = function () { return 'Oops' };
+
+   p1.printName() // "Oops"
+   p2.printName() // "Oops"
+
+   var p3 = new Point(4,2);
+   p3.printName() // "Oops"
+
+   Object.getPrototypeOf(p1).sayName = function () {
+     console.log('just test one time');
+   }
+
+   //取值函数（getter）和存值函数（setter,相当于proxy的拦截行为
+   class MyClass {
+     constructor() {
+       // ...
+     }
+     get prop() {
+       return 'getter';
+     }
+     set prop(value) {
+       console.log('setter: '+value);
+     }
+   }
+
+   let inst = new MyClass();
+
+   inst.prop = 123;
+   // setter: 123
+
+   inst.prop
+   // 'getter'
+
+  //与函数一样，类也可以使用表达式的形式定义。
+   let person = new class {
+     constructor(name) {
+       this.name = name;
+     }
+
+     sayName() {
+       console.log(this.name);
+     }
+   }('张三');
+
+   person.sayName(); // "张三"
+
+  //类的方法内部如果含有this，它默认指向类的实例。但是，必须非常小心，一旦单独使用该方法，很可能报错。
+   class Logger {
+     printName(name = 'there') {
+       this.print(`Hello ${name}`);
+     }
+
+     print(text) {
+       console.log(text);
+     }
+   }
+
+   const logger = new Logger();
+   const { printName } = logger;
+   printName();
+   //一个比较简单的解决方法是，在构造方法中绑定this，这样就不会找不到print方法了。
+   class Logger {
+     constructor() {
+       this.printName = this.printName.bind(this);
+     }
+     printName(name = 'there') {
+       this.print(`Hello ${name}`);
+     }
+
+     print(text) {
+       console.log(text);
+     }
+   }
+
+   const logger = new Logger();
+   const { printName } = logger;
+   printName();
+   //或者使用箭头函数
+   class Logger {
+     printName = (name = 'there') =>{
+       this.print(`Hello ${name}`);
+     }
+
+     print(text) {
+       console.log(text);
+     }
+   }
+
+   const logger = new Logger();
+   const { printName } = logger;
+   printName();
+   //还有一种解决方法是使用Proxy，获取方法的时候，自动绑定this
+  function selfish(target) {
+    const cache = new WeakMap();
+    const handler = {
+      get (target, key) {
+        const value = Reflect.get(target, key);
+        if (typeof value !== "function") {
+          return value;
+        }
+
+        if (!cache.has(value)) {
+          cache.set(value, value.bind(target)); //
+        }
+
+        return cache.get(value);
+      }
+    };
+    const proxy = new Proxy(target, handler);
+    return proxy;
+  }
+  const logger = selfish(new Logger())
+
+  //静态方法
+  //如果在一个方法前，加上static关键字，就表示该方法不会被 --实例--继承，而是直接通过类来调用
+   class Foo {
+     static classMethod() {
+       return 'hello';
+     }
+   }
+
+   Foo.classMethod() // 'hello'
+
+   var foo = new Foo();
+   foo.classMethod() //报错
+  //注意，如果静态方法包含this关键字，这个this指的是类，而不是实例。
+   class Foo {
+     static bar() {
+       this.baz();
+     }
+     static baz() {
+       console.log('hello');
+     }
+     baz() {
+       console.log('world');
+     }
+   }
+
+   Foo.bar() // hello, 相当于Foo.baz(),静态方法可以和非静态方法重名；
+  //父类的静态方法，可以被子类继承
+   class Foo {
+     static classMethod() {
+       return 'hello';
+     }
+   }
+
+   class Bar extends Foo {
+   }
+
+   Bar.classMethod() // 'hello'
+  //静态方法也是可以从super对象上调用的
+   class Foo {
+     static classMethod() {
+       return 'hello';
+     }
+   }
+
+   class Bar extends Foo {
+     static classMethod() {
+       return super.classMethod() + ', too';
+     }
+   }
+
+   Bar.classMethod() // "hello, too"
+  //实例属性除了定义在constructor()方法里面的this上面，也可以定义在类的最顶层。
+   class IncreasingCounter {
+     constructor() {
+       this._count = 0; //##
+     }
+     get value() {
+       console.log('Getting the current value!');
+       return this._count;
+     }
+     increment() {
+       this._count++;
+     }
+   } //等同于
+
+   class IncreasingCounter {
+     _count = 0; //##
+     get value() {
+       console.log('Getting the current value!');
+       return this._count;
+     }
+     increment() {
+       this._count++;
+     }
+   }
+
+   /**
+   * extends
+   * */
+
+   //子类必须在constructor方法中调用super方法，
+   // 否则新建实例时会报错。这是因为子类自己的this对象，
+   // 必须先通过父类的构造函数完成塑造，得到与父类同样的实例属性和方法，
+   // 然后再对其进行加工，加上子类自己的实例属性和方法。
+   // 如果不调用super方法，子类就得不到this对象。
+   class Point {
+   }
+
+   class ColorPoint extends Point {
+     constructor(x, y, color) {
+       super(x, y); // 调用父类的constructor(x, y) ，相当于Point.prototype.constructor.call(this)
+       this.color = color;
+     }
+
+     toString() {
+       return this.color + ' ' + super.toString(); // 调用父类的toString()
+     }
+   }
+
+   //super作为对象时，在普通方法中，指向父类的原型对象；在静态方法中，指向父类。
+   //定义在父类实例上的方法和属性，是无法通过super拿到
+   class A {
+     constructor() {
+       this.p = 2;
+     }
+   }
+
+   class B extends A {
+     get m() {
+       return super.p;
+     }
+   }
+
+   let b = new B();
+   b.m // undefined
+
+   //定义在原型链上可以拿到
+   class A {}
+   A.prototype.x = 2;
+
+   class B extends A {
+     constructor() {
+       super();
+       console.log(super.x) // 2
+     }
+   }
+
+   let b = new B();
+   //ES6 规定，在子类普通方法中通过super调用父类的方法时，方法内部的this指向当前的子类实例。
+   class A {
+     constructor() {
+       this.x = 1;
+     }
+     print() {
+       console.log(this.x);
+     }
+   }
+
+   class B extends A {
+     constructor() {
+       super();
+       this.x = 2;
+     }
+     m() {
+       super.print();
+     }
+   }
+
+   let b = new B();
+   b.m() // 2
+  //由于this指向子类实例，所以如果通过super对某个属性赋值，这时super就是this，赋值的属性会变成子类实例的属性
+   class A {
+     constructor() {
+       this.x = 1;
+     }
+   }
+
+   class B extends A {
+     constructor() {
+       super();
+       this.x = 2;
+       super.x = 3;
+       console.log(super.x); // undefined
+       console.log(this.x); // 3
+     }
+   }
+
+   let b = new B();
+
+   //如果super作为对象，用在--静态--方法之中，这时super将指向父类，
+   // 而不是父类的原型对象，在普通方法之中指向父类的原型对象。
+   class Parent {
+     static myMethod(msg) {
+       console.log('static', msg);
+     }
+
+     myMethod(msg) {
+       console.log('instance', msg);
+     }
+   }
+
+   class Child extends Parent {
+     static myMethod(msg) {
+       super.myMethod(msg);
+     }
+
+     myMethod(msg) {
+       super.myMethod(msg);
+     }
+   }
+
+   Child.myMethod(1); // static 1
+
+   var child = new Child();
+   child.myMethod(2); // instance 2
+  //在子类的静态方法中通过super调用父类的方法时，
+  // 方法内部的this指向当前的子类，而不是子类的实例,
+   // 如果子类和父类同时都有同名的静态属性，优先获取子类的，否则继承父类的属性
+   class A {
+     constructor() {
+       this.x = 1;
+     }
+     static print() {
+       console.log(this.x);
+     }
+   }
+
+   class B extends A {
+     constructor() {
+       super();
+       this.x = 2;
+     }
+     static m() {
+       super.print();
+     }
+   }
+
+   B.x = 3;
+   B.m() // 3
+
+  //（1）子类的__proto__属性，表示构造函数的继承，总是指向父类。
+  //（2）子类prototype属性的__proto__属性，表示方法的继承，总是指向父类的prototype属性。
+   class A {
+   }
+
+   class B extends A {
+   }
+
+   B.__proto__ === A // true
+   B.prototype.__proto__ === A.prototype // true
+
+  //过程
+   class A {
+   }
+
+   class B {
+   }
+
+   // B 的实例继承 A 的实例
+   Object.setPrototypeOf(B.prototype, A.prototype);
+
+   // B 继承 A 的静态属性
+   Object.setPrototypeOf(B, A);
+
+   const b = new B();
+
+   //mixin 混入
+   function mix(...mixins) {
+     class Mix {
+       constructor() {
+         for (let mixin of mixins) {
+           copyProperties(this, new mixin()); // 拷贝实例属性
+         }
+       }
+     }
+
+     for (let mixin of mixins) {
+       copyProperties(Mix, mixin); // 拷贝静态属性
+       copyProperties(Mix.prototype, mixin.prototype); // 拷贝原型属性
+     }
+
+     return Mix;
+   }
+
+   function copyProperties(target, source) {
+     for (let key of Reflect.ownKeys(source)) {
+       if ( key !== 'constructor'
+         && key !== 'prototype'
+         && key !== 'name'
+       ) {
+         let desc = Object.getOwnPropertyDescriptor(source, key);
+         Object.defineProperty(target, key, desc);
+       }
+     }
+   }
+
+   class DistributedEdit extends mix(Loggable, Serializable) {
+     // ...
+   }
+
+   /**
+   * export
+   * */
+   //export *命令会忽略circle模块的default方法
+   export * from 'circle';
+   export var e = 2.71828182846;
+   export default function(x) { //单独export
+       return Math.exp(x);
+   }
+   //常量跨模块共享
+   // constants.js 模块
+   export const A = 1;
+   export const B = 3;
+   export const C = 4;
+
+   // test1.js 模块
+   import * as constants from './constants';
+   console.log(constants.A); // 1
+   console.log(constants.B); // 3
+
+   //import 和 require,前者是编译时引入，后者是运行时引入
+   //import()函数可以，参数为引入模块的位置，可以实现动态加载和require类似，
+   //只是import()是异步加载，而require是同步加载
+   const main = document.querySelector('main');
+
+   import(`./section-modules/${someVariable}.js`)
+       .then(module => {
+           module.loadPageInto(main);
+       })
+       .catch(err => {
+           main.textContent = err.message;
+       });
+   /**
+   * 模块加载
+   * */
+   //defer async 脚本会异步加载
+   //defer与async的区别是：defer要等到整个页面在内存中正常渲染结束（DOM 结构完全生成，以及其他脚本执行完成），才会执行；async一旦下载完，渲染引擎就会中断渲染，执行这个脚本以后，再继续渲染。一句话，defer是“渲染完再执行”，
+   // async是“下载完就执行”。另外，如果有多个defer脚本，会按照它们在页面出现的顺序加载，而多个async脚本是不能保证加载顺序的。
+
+   /**
+   *加载es6模块，加入type= 'module',异步加载相当于defer
+   * */
+   /** <script type="module" src="./foo.js" /> 等同于 */
+   /** <script type="module" src="./foo.js" defer /> */
+   //也可以使用sync属性，加载完成就立即执行
+
+    //模块之中，顶层的this关键字返回undefined，而不是指向window。也就是说，在模块顶层使用this关键字，是无意义的。
+
+    /**
+     *
+     * ES6 模块与 CommonJS 模块的差异
+    * */
+
+    //CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用。
+    //CommonJS 模块是运行时加载，ES6 模块是编译时输出接口。
+
+    //commonjs模块导出
+    // a.js
+    module.exports = {
+        foo: 'hello',
+        bar: 'world'
+    };
+
+   // 等同于
+   export default {
+       foo: 'hello',
+       bar: 'world'
+   };
+
+   //所以可以通过
+   // 写法一
+   import baz from './a';
+   // baz = {foo: 'hello', bar: 'world'};
+
+   // 写法二
+   import {default as baz} from './a';
+   // baz = {foo: 'hello', bar: 'world'};
+
+   // 写法三
+   import * as baz from './a';
+   // baz = {
+   //   get default() {return module.exports;},
+   //   get foo() {return this.default.foo}.bind(baz),
+   //   get bar() {return this.default.bar}.bind(baz)
+   // }
+
+    //由于 ES6 模块是编译时确定输出接口，CommonJS 模块是运行时确定输出接口，所以采用import命令加载 CommonJS 模块时，不允许采用下面的写法
+
+   // 不正确
+   import { readFile } from 'fs';
+
+   // 正确的写法一
+   import * as express from 'express';
+   const app = express.default();
+
+   // 正确的写法二
+   import express from 'express';
+   const app = express();
+
+   //CommonJS 模块加载 ES6 模块
+
+   //CommonJS 模块加载 ES6 模块，不能使用require命令，而要使用import()函数。ES6 模块的所有输出接口，会成为输入对象的属性
+
+   // es.mjs
+   let foo = { bar: 'my-default' };
+   export default foo;
+
+   // cjs.js
+   const es_namespace = await import('./es.mjs');
+   // es_namespace = {
+   //   get default() {
+   //     ...
+   //   }
+   // }
+   console.log(es_namespace.default);
+   // { bar:'my-default' }
+
+    /**
+    * commonjs加载原理
+    * */
+    //Node 内部加载模块后生成的一个对象，以后需要用到这个模块的时候，就会到exports属性上面取值。
+   // 即使再次执行require命令，也不会再次执行该模块，而是到缓存之中取值。
+   // 也就是说，CommonJS 模块无论加载多少次，都只会在第一次加载时运行一次，
+   // 以后再加载，就返回第一次运行的结果，除非手动清除系统缓存。
+
+    //编程规范
+    //单行定义的对象，最后一个成员不以逗号结尾。多行定义的对象，最后一个成员以逗号结尾。
+        // bad
+    const a = { k1: v1, k2: v2, };
+   const b = {
+       k1: v1,
+       k2: v2
+   };
+
+   // good
+   const a = { k1: v1, k2: v2 };
+   const b = {
+       k1: v1,
+       k2: v2,
+   };
+
+   //对象尽量静态化，一旦定义，就不得随意添加新的属性。如果添加属性不可避免，要使用Object.assign方法。
+   // bad
+   const a = {};
+   a.x = 3;
+
+   // if reshape unavoidable
+   const a = {};
+   Object.assign(a, { x: 3 });
+
+   // good
+   const a = { x: null };
+   a.x = 3;
+
+   //如果对象的属性名是动态的，可以在创造对象的时候，使用属性表达式定义。
+   // bad
+   const obj = {
+       id: 5,
+       name: 'San Francisco',
+   };
+   obj[getKey('enabled')] = true;
+
+   // good
+   const obj = {
+       id: 5,
+       name: 'San Francisco',
+       [getKey('enabled')]: true,
+   };
+
+   //所有配置项都应该集中在一个对象，放在最后一个参数，布尔值不可以直接作为参数。
+   // bad
+   function divide(a, b, option = false ) {
+   }
+
+   // good
+   function divide(a, b, { option = false } = {}) {
+   }
+
+   //不要在函数体内使用 arguments 变量，使用 rest 运算符（...）代替。因为 rest 运算符显式表明你想要获取参数，而且 arguments 是一个类似数组的对象，而 rest 运算符可以提供一个真正的数组。
+   // bad
+   function concatenateAll() {
+       const args = Array.prototype.slice.call(arguments);
+       return args.join('');
+   }
+
+   // good
+   function concatenateAll(...args) {
+       return args.join('');
+   }
+
+   //使用默认值语法设置函数参数的默认值
+   // bad
+   function handleThings(opts) {
+       opts = opts || {};
+   }
+
+   // good
+   function handleThings(opts = {}) {
+       // ...
+   }
+
+   //如果模块只有一个输出值，就使用export default，如果模块有多个输出值，就不使用export default，export default与普通的export不要同时使用。
+
+    /**
+    * 修饰器
+    * */
+
+    //许多面向对象的语言都有修饰器（Decorator）函数，用来修改类的行为
+    @testable
+    class MyTestableClass {
+        // ...
+    }
+
+   function testable(target) { //target即被修饰的目标类
+       target.isTestable = true;
+   }
+
+   MyTestableClass.isTestable
+
+    //等同于
+   @decorator
+   class A {}
+
+   // 等同于
+
+   class A {}
+   A = decorator(A) || A;
+
+   //react redux两种写法
+   class MyReactComponent extends React.Component {}
+   export default connect(mapStateToProps, mapDispatchToProps)(MyReactComponent);
+
+   //等同于
+   @connect(mapStateToProps, mapDispatchToProps)
+   export default class MyReactComponent extends React.Component {}
+
+   /**
+   * 方法修饰
+   * */
+    //修饰器不仅可以修饰类，还可以修饰类的属性。
+   class Person {
+       @readonly
+       name() { return `${this.first} ${this.last}` }
+   }
+   //可以接受三个参数
+   readonly(Person.prototype, 'name', descriptor);
+
+   //修改属性描述对象的enumerable属性，使得该属性不可遍历
+   class Person {
+       @nonenumerable
+       get kidCount() { return this.children.length; }
+   }
+
+   function nonenumerable(target, name, descriptor) {
+       descriptor.enumerable = false;
+       return descriptor;
+   }
+
+   //如果同一个方法有多个修饰器，会像剥洋葱一样，先从外到内进入，然后由内向外执行。
+   function dec(id){
+       console.log('evaluated', id);
+       return (target, property, descriptor) => console.log('executed', id);
+   }
+
+   class Example {
+       @dec(1)
+       @dec(2)
+       method(){}
+   }
+
+   // evaluated 1
+   // evaluated 2
+   // executed 2
+   // executed 1
+</script>
+</html>
