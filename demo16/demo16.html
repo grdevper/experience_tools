@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>observer-dep-watch</title>
+</head>
+<body>
+<script type="text/javascript">
+  class Observer {
+    constructor(data) {
+      this.walk(data);
+    }
+    walk(data){
+      let keys = Object.keys(data);
+      for (let i = 0; i<keys.length; i++){
+        defineReactive(data, keys[i], data[keys[i]]);
+      }
+    }
+  }
+
+  function defineReactive(data, key, val) {
+    observer(val);
+    let dep = new Dep();
+    Object.defineProperty(data, key, {
+      enumerable: true,
+      configurable: true,
+      get: function () {
+        dep.depend();
+        return val;
+      },
+      set: function (newVal) {
+        if (val === newVal) {
+          return;
+        }
+        observer(newVal);
+        dep.notify();
+      }
+    })
+  }
+
+  function observer(data) {
+    if(Object.prototype.toString.call(data) !== '[object Object]') {
+      return
+    }
+    new Observer(data) //如果是对象的话，继续分解
+  }
+
+  class Dep {
+    constructor() {
+      this.subs = [];
+    }
+
+    depend() {
+      this.subs.push(Dep.target)
+    }
+
+    notify() {
+      for(let i=0; i<this.subs.length;i++) {
+        this.subs[i].fn();
+      }
+    }
+  }
+
+  Dep.target = null;
+  function pushTarget(watch) {
+    Dep.target = watch;
+  }
+
+  class Watch {
+    constructor(exp, fn){
+       this.exp = exp;
+       this.fn = fn;
+       pushTarget(this); //关联watch对象
+       data[exp]; //相当于调用defineReactive get
+    }
+  }
+
+  var data = {
+    a: 1,
+    b: {
+      c: 2
+    }
+  }
+
+  observer(data)
+
+  new Watch('a', () => {
+    console.log(data.a)
+  })
+
+  new Watch('a', () => {
+    console.log(90)
+  })
+
+  new Watch('b.c', () => {
+    console.log(80)
+  })
+
+  setTimeout(() => {
+    //data.a = 2
+  }, 1000)
+</script>
+</body>
+</html>
