@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>canvas</title>
+</head>
+<style type="text/css">
+  @keyframes test {
+    0% {top: 0px; left: 0px}
+    100% {top: 100px; left: 200px}
+  }
+  .animation{
+    width: 200px;
+    height: 100px;
+    border: 1px solid red;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .line{
+    animation: test 8s linear;
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    background: yellow;
+  }
+</style>
+<body>
+<canvas id="canvas"></canvas>
+<div class="animation">
+    <div class="line"></div>
+</div>
+</body>
+<script type="text/javascript">
+  if (!document.getElementById('canvas').getContext) {
+    console.log('该浏览器不支持canvas');
+  }
+  const drawing = document.getElementById('canvas');
+  const context = drawing.getContext('2d');
+  context.fillStyle = 'red';
+  context.fillRect(100, 100 , 100, 100);
+
+  context.lineWidth = 10; // 线条宽度
+  context.strokeStyle = 'yellow'; // 描边
+  context.strokeRect(100, 10, 90, 80);
+
+  context.moveTo(100, 10);
+  context.lineTo(190, 90);
+  context.stroke();
+
+
+</script>
+</html>
