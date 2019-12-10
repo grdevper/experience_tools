@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>eventEmitter</title>
+</head>
+<script type="text/javascript">
+  /*
+  * 手动实现EventEmitter
+  * **/
+  function EventEmitter() {
+    this._maxListeners = 10;
+    this._events = Object.create(null);
+  }
+
+  // 向对列添加事件
+  EventEmitter.prototype.addListener = function (type, listener, prepend) {
+    if (!this._events) {
+      this._events = Object.create(null);
+    }
+
+    if (this._events[type]) {
+      // 添加到数组最前面
+      if (prepend) {
+        this._events[type].unshift(listener);
+      } else {
+        this._events[type].push(listener);
+      }
+    } else {
+      this._events[type] = [listener];
+    }
+  };
+
+  //移除事件
+  EventEmitter.prototype.removeListener = function (type, listener) {
+    if (Array.isArray(this._events[type])) {
+      if (!listener) {
+        delete this._events[type]
+      } else {
+        this._events[type] = this._events[type].filter(e => e !== listener && e.origin !== listener);
+      }
+    }
+  };
+
+  //向事件队列添加事件，执行一次
+  EventEmitter.prototype.once = function (type, listener) {
+    const only = (...args) => {
+      listener.apply(this, args);
+      this.removeListener(type, listener);
+    };
+    only.origin = listener;
+    this.addListener(type, only);
+  };
+
+  //执行某类事件
+  EventEmitter.prototype.emit = function (type, ...args) {
+    if (Array.isArray(this._events[type])) {
+      this._events[type].forEach(fn => {
+        fn.apply(this, args);
+      })
+    }
+  };
+
+  //设置最大监听数
+  EventEmitter.prototype.setMaxListeners = function (count) {
+    this._maxListeners = count;
+  };
+
+  const event = new EventEmitter();
+  event.setMaxListeners(20);
+
+  var onceListener = function (args) {
+    console.log('我只能被执行一次', args, this);
+  };
+
+  var listener = function (args) {
+    console.log('我是一个listener', args, this);
+  };
+
+  event.once('click', onceListener);
+  // event.addListener('click', listener);
+  //
+  // event.emit('click', '参数');
+  event.emit('click');
+  event.emit('click');
+</script>
+<body></body>
+</html>

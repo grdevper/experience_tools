@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数组常规操作</title>
+</head>
+<script type="text/javascript">
+  // 使用reduce扁平化数组
+  function flatten(array) {
+    return array.reduce(
+      (target, current) => {
+        Array.isArray(current) ?
+          target.concat(flatten(current)) :
+          target.concat(current)
+      }
+    ,[])
+  }
+
+  //指定深度扁平数组
+  function flattenByDeep(array, deep = 1) {
+    return array.reduce(
+      (target, current) =>
+        Array.isArray(target) && deep > 1 ?
+          target.concat(flattenByDeep(current, deep - 1)) :
+          target.concat(current)
+    , [])
+  }
+  // 数组最大值
+  Math.max.apply(null, [1,2,3,4,5]);
+  Math.max(...[1,2,3,4,5]);
+
+  //reduce实现map
+  Array.prototype.reduceToMap = function (handler) {
+    return this.reduce((target, current, index) => {
+      target.push(handler.call(this, current, index));
+      return target
+    }, [])
+  };
+
+  // reduce实现filter
+  Array.prototype.reduceToFilter = function (handler) {
+    return this.reduce((target, current, index) => {
+      if (handler.call(this, current, index)) {
+        target.push(current);
+      }
+      return target;
+    }, [])
+  };
+</script>
+<body>
+
+</body>
+</html>
