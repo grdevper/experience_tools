@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文本控制</title>
+</head>
+<style type="text/css">
+  /*first-letter text-transform*/
+  p{
+    font-weight: bold;
+    font-size: 22px;
+  }
+  p::first-letter{
+    font-size: 44px;
+    color: red;
+  }
+  input{
+    text-transform: uppercase;
+  }
+  /*
+    white-space:
+    normal：合并空白符和换行符；
+    nowrap：合并空白符，但不许换行；
+    pre：不合并空白符，并且只在有换行符的地方换行；
+    pre-wrap：不合并空白符，允许换行符换行和文本自动换行；
+  */
+  li{
+    background: cyan;
+    display: block;
+    width: 400px;
+  }
+  li:first-child{
+    white-space: normal;
+  }
+  li:nth-child(2){
+    white-space: nowrap;
+  }
+  li:nth-child(3){
+    white-space: pre;
+  }
+  li:nth-child(4){
+    white-space: pre-wrap;
+  }
+</style>
+<body>
+<p>¥1000</p>
+<input placeholder="输入小写字母看看效果" />
+<ul>
+  <li>我是默认的            我是white-space: normal;</li>
+  <li>我是不换行的            我是white-space: nowrap;</li>
+  <li>我是不合并空白符且不自动换行的
+    我是white-space: pre;</li>
+  <li>我是不合并空白符且自动换行的    我是white-space: pre-wrap;</li>
+</ul>
+</body>
+</html>

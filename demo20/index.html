@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>z-index</title>
+   <!--https://juejin.im/post/5ce607a7e51d454f6f16eb3d#comment-->
+</head>
+<style type="text/css">
+  /*.dad元素默认设置z-index: auto，没有创建层叠上下文，此时其就是一个普通的块级盒子，所以设置了z-index: -1的.son元素跑到了爸爸身后看不见了。
+     而由于.mom设置了z-index: 0，创建出了一个层叠上下文，所以.son元素就算设置了z-index: -1,也是能被看见*/
+  .dad, .mom {
+    position: relative;
+    height: 100px;
+    margin-bottom: 20px;
+    background: cyan;
+  }
+  .mom{
+    z-index: 0;
+  }
+  .son{
+    width: 100px;
+    height: 100px;
+    background: lightgreen;
+    position: absolute;
+    z-index: -1;
+  }
+  /*当块级元素和内联元素发生层叠，内联元素居于块级元素之上*/
+  .span_1{
+    background: lightgreen;
+    color: white;
+  }
+  .inlineAndBlock{
+    width: 100px;
+    height: 100px;
+    margin-top: -30px;
+    background: cyan;
+  }
+  /*普通定位元素层叠水平在普通元素之上。普通定位元素是指z-index为auto的定位元素*/
+  .pos{
+    width: 100px;
+    height: 100px;
+    background: cyan;
+  }
+  .span_2{
+    position: absolute;
+    background: lightgreen;
+    color: white;
+  }
+</style>
+<body>
+<div class="dad">
+  <div class="son"></div>
+</div>
+<div class="mom">
+  <div class="son"></div>
+</div>
+<span class="span_1">Im span!</span>
+<div class="inlineAndBlock"></div>
+
+<span class="span_2">Im span!</span>
+<div class="pos"></div>
+</body>
+</html>
