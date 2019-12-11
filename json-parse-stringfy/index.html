@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>json parse stringify</title>
+</head>
+<script type="text/javascript">
+  // 序列化+replace 修改key
+  const mapObj = {
+    _id: 'id',
+    created_at: 'createdAt',
+    updated_at: 'updatedAt',
+  };
+
+  const oLearn = {
+    _id: 1,
+    content: '今天学习 JSON.stringify()，我很开心！created_at',
+    created_at: 'Mon Nov 25 2019 14:03:55 GMT+0800 (中国标准时间)',
+    updated_at: 'Mon Nov 25 2019 16:03:55 GMT+0800 (中国标准时间)'
+  };
+
+  // 匹配对应的key,value里面最好不要有键名，也要被对应的替换
+  const a = JSON.parse(JSON.stringify(oLearn).replace(/_id|created_at|updated_at/gi,
+    matched => mapObj[matched]
+  ));
+  console.log(a);
+
+  //undefined、任意的函数、symbol作为对象属性值时，json.stringify()将跳过，忽略将其序列化
+  var data = {
+    a: "aaa",
+    b: undefined,
+    c: Symbol("dd"),
+    fn: function() {
+      return true;
+    }
+  };
+  console.log(JSON.stringify(data)); //{"a":"aaa"}
+  // undefined、任意的函数以及 symbol 作为数组元素值时，JSON.stringify() 会将它们序列化为 null
+  JSON.stringify(["aaa", undefined, function aa() {
+    return true
+  }, Symbol('dd')]);
+
+  // "["aaa",null,null,null]"
+
+  // undefined、任意的函数以及 symbol 被 JSON.stringify() 作为单独的值进行序列化时都会返回 undefined
+  JSON.stringify(undefined)
+  // undefined
+
+  /**
+   * 转换值如果有 toJSON() 函数，该函数返回什么值，
+   * 序列化结果就是什么值，并且忽略其他属性的值
+   * */
+  JSON.stringify({
+    say: "hello JSON.stringify",
+    toJSON: function() {
+      return "i am happy";
+    }
+  });
+  // "i am happy"
+  /**
+   * Json.stringify()将会正常序列化date的值
+   * */
+  JSON.stringify({now: new Date()});
+  // "{"now":"2019-12-08T07:42:11.973Z"}"
+  /**
+  *NaN 和 Infinity 格式的数值及 null 都会被当做 null
+  * */
+  JSON.stringify(NaN); //null
+  /**
+   *布尔值、数字、字符串的包装对象在序列化过程中会自动转换成对应的原始值。
+   * */
+  JSON.stringify([new Number(1), new String("false"), new Boolean(false)]);
+  // [1, "false", false]
+  /**
+   *其他类型的对象，包括 Map/Set/WeakMap/WeakSet，仅会序列化可枚举的属性。
+   * */
+  // 不可枚举的属性默认会被忽略：
+  JSON.stringify(
+    Object.create(
+      null,
+      {
+        x: { value: 'json', enumerable: false },
+        y: { value: 'stringify', enumerable: true }
+      }
+    )
+  );
+  // "{"y":"stringify"}"
+  /**
+  *JSON.parse(JSON.stringify())对包含循环引用的对象（对象之间相互引用，形成无限循环）执行此方法，会抛出错误
+  * */
+  const obj = {
+    name: "loopObj"
+  };
+  const loopObj = {
+    obj
+  };
+  // 对象之间形成循环引用，形成闭环
+  obj.loopObj = loopObj;
+  function deepClone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  }
+  //deepClone(obj)
+  /**
+  *所有以 symbol 为属性键的属性都会被完全忽略掉，即便 replacer 参数中强制指定包含了它们。
+  * */
+  JSON.stringify({ [Symbol.for("json")]: "stringify" }, function(k, v) {
+    if (typeof k === "symbol") {
+      return v;
+    }
+  });
+  // undefined
+  /**
+   *Json.stringify()的第二个参数replacer
+   * */
+  var data = {
+    a: "aaa",
+    b: undefined,
+    c: Symbol("dd"),
+    fn: function() {
+      return true;
+    }
+  };
+  // 不用 replacer 参数时
+  JSON.stringify(data);
+
+  // "{"a":"aaa"}"
+  // 使用 replacer 参数作为函数时
+  JSON.stringify(data, (key, value) => {
+    switch (true) {
+      case typeof value === "undefined":
+        return "undefined";
+      case typeof value === "symbol":
+        return value.toString();
+      case typeof value === "function":
+        return value.toString();
+      default:
+        break;
+    }
+    return value;
+  });
+  // "{"a":"aaa","b":"undefined","c":"Symbol(dd)","fn":"function() {\n    return true;\n  }"}"
+  /**
+  * replacer 被传入的函数时，第一个参数不是对象的第一个键值对，而是空字符串作为 key 值，value 值是整个对象的键值对：
+  * */
+  var data = {
+    a: 2,
+    b: 3,
+    c: 4,
+    d: 5
+  };
+  JSON.stringify(data, (key, value) => {
+    console.log(value);
+    return value;
+  });
+  // 第一个被传入 replacer 函数的是 {"":{a: 2, b: 3, c: 4, d: 5}}
+  // {a: 2, b: 3, c: 4, d: 5}
+  // 2
+  // 3
+  // 4
+  // 5
+
+  /**
+   *replacer 作为数组时，结果非常简单，数组的值就代表了将被序列化成 JSON 字符串的属性名。
+   * */
+  const jsonObj = {
+    name: "JSON.stringify",
+    params: "obj,replacer,space"
+  };
+
+  // 只保留 params 属性的值
+  console.log(JSON.stringify(jsonObj, ["name"]));
+  // "{"params":"obj,replacer,space"}"
+
+</script>
+<body>
+
+</body>
+</html>
