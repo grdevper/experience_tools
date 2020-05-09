@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>千分符</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+  /**
+  * 使用该方法实现千分符，不能是字符串转成number类型才行
+  * */
+  var a = 1234445555;
+  console.log(a.toLocaleString());
+
+  // 正则实现 字符串
+  var b = '982929292920';
+  function thousand(str) {
+    const reg = /\d(?=(?:\d{3})+(?:\.\d+|$))/g;
+    return str.replace(reg, '$&,')
+  }
+  console.log(thousand(b));
+</script>
+</html>

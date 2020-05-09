@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>全排列</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+  const permute = function(nums) {
+    if (nums.length <= 1) return [nums];
+    const permutes = [];
+    for (let i = 0; i < nums.length; i++) {
+      const num = nums[i];
+      const others = nums.slice(0, i).concat(nums.slice(i + 1));
+      console.log(others);
+      const list = permute(others);
+      list.forEach(item => {
+        permutes.push([num].concat(item))
+      })
+    }
+    return permutes
+  };
+  const arr = [1, 2, 3, 4];
+  console.log(permute(arr))
+</script>
+</html>

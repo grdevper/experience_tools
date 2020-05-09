@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>将数组转换成关联结构树</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+  const roles = [
+    { id: 11, name: 'a', parentId: 0},
+    { id: 12, name: 'b', parentId: 0},
+    { id: 13, name: 'c', parentId: 11},
+    { id: 14, name: 'd', parentId: 11},
+    { id: 15, name: 'e', parentId: 12},
+    { id: 16, name: 'f', parentId: 12}
+  ];
+
+  function convert(roles) {
+    const root = [];
+    const dict = {};
+    roles.forEach(item => {
+      if (item.parentId === 0) {
+        root.push(item);
+      }
+      item.children = [];
+      dict[item.id] = item;
+    });
+
+    roles.forEach(item => {
+      if (item.parentId !== 0) {
+        dict[item.parentId].children.push(item)
+      }
+    });
+    return root
+  }
+  console.log(convert(roles))
+</script>
+</html>

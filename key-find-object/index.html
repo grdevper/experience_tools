@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>根据关键词找出所在对象id</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+  var docs = [
+    {
+      id: 1,
+      words: ['hello', "world"]
+    }, {
+      id: 2,
+      words: ['hello', "hihi"]
+    }, {
+      id: 3,
+      words: ['haha', "hello"]
+    }, {
+      id: 4,
+      words: ['world', "nihao"]
+    }
+  ];
+  findDocList(docs, ['hello']) // 文档id1，文档id2，文档id3
+  findDocList(docs, ['hello', 'world']) // 文档id1
+  function findDocList(docs, word = []) {
+    if (word.constructor !== Array) return;
+    let ids = [];
+    for (let i = 0; i < docs.length; i++) {
+      let {id, words} = docs[i];
+      let flag = word.every((item) => {
+        return words.indexOf(item) > -1;
+      });
+      flag && ids.push(id);
+    }
+    return ids;
+  }
+  findDocList(docs, ['hello', 'world']);
+</script>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>什么情况下 满足if (a == 1 & a == 2 & a == 3)这个条件</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+  var a = {
+    a: 1,
+    valueOf() {
+      console.log(9, this.a);
+      return this.a++
+    }
+  };
+   console.log(a==2);
+   //console.log(a==2);
+   // console.log(a==3);
+
+  // if (a == 1 & a == 2 & a == 3) {
+  //   console.log(1)
+  // }
+</script>
+</html>

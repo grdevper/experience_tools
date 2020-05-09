@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>预览</title>
+</head>
+<body>
+<a href="http://www.gov.cn/zhengce/pdfFile/2020_PDF.pdf">pdf</a>
+<div id="content"></div>
+<iframe src="http://www.gov.cn/zhengce/pdfFile/2020_PDF.pdf" width="100%" height="100%">
+
+    This browser does not support PDFs. Please download the PDF to view it: <a href="http://www.gov.cn/zhengce/pdfFile/2020_PDF.pdf">Download PDF</a>
+
+</iframe>
+<embed src="http://www.gov.cn/zhengce/pdfFile/2020_PDF.pdf" type="application/pdf" width="100%" height="100%">
+<iframe src='https://view.officeapps.live.com/op/view.aspx?src=http://storage.xuetangx.com/public_assets/xuetangx/PDF/1.xls' width='100%' height='100%' frameborder='1'>
+</iframe>
+<!--<iframe src="https://docs.google.com/viewer?url=http://storage.xuetangx.com/public_assets/xuetangx/PDF/1.xls"></iframe>-->
+<a href="http://www.xdocin.com/xdoc?_func=to&amp;_format=html&amp;_cache=1&amp;_xdoc=http://www.xdocin.com/demo/demo.docx" target="_blank" rel="nofollow">XDOC</a>
+</body>
+<!--<script type="text/javascript" src="jquery.media.js"></script>-->
+<!--<script type="text/javascript" src="jquery.min.js"></script>-->
+<script type="text/javascript">
+    /*
+    * 方法一：借助阿里的预览方式，资源需要存储在阿里的对象oss中
+    *  https://preview.imm.aliyun.com/index.html?url=预览地址，
+    *  通过在iframe中引入这个地址进行预览
+    *  文档：https://help.aliyun.com/document_detail/74947.html?spm=5176.10695662.1996646101.searchclickresult.374c2170LNg8Kp
+    * */
+
+    /*
+    * 方法二：如果格式是pdf 并且ui要求不高可以通过a标签实现
+    * <a href="">pdf</a>
+    * */
+
+    /*
+    * 方式三：
+    * 通过jquery.media.js来预览各种包括pdf在内的媒体文件，word类型的文件不支持
+    * */
+    // $('#content').media({
+    //     width: '100%',
+    //     height: '100%',
+    //     autoplay: true,
+    //     src:'http://storage.xuetangx.com/public_assets/xuetangx/PDF/PlayerAPI_v1.0.6.pdf',
+    // });
+
+    /*
+    * 方式四：通过标签嵌入内容 embed
+    * */
+
+    /*
+    * 方式五： iframe+a实现预览非word文档
+    * */
+
+    /*
+    * 方式六：PDFObject 需要映入pdfobject.min.js
+    // * */
+    // if(PDFObject.supportsPDFs){
+    //     // PDF嵌入到网页
+    //     PDFObject.embed("index.pdf", "#content" );
+    // }
+
+    //==========================================================================\\
+    //word、xls、ppt文件在线预览功能
+    //可以直接调用微软的在线预览功能来实现，只要保证资源外网可以访问， googel也有同样的方法
+
+
+    // XDOC可以实现预览以DataURI表示的DOC文档，此外XDOC还可以实现文本、带参数文本、html文本、json文本、公文等在线预览
+
+
+    // excel现有类似与pdf.js的sheet.js来实现预览
+
+    //总之：免费的优选微软的方式，或者后端转为pdf和图片的方式提共给前端，或者购买在线预览服务比如
+    // 百度的doc文档在线预览， 阿里的云预览服务。
+
+</script>
+</html>

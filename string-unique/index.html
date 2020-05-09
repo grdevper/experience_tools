@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>字符串去除相邻的重复项</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+    / 正则表达式
+    let str = 'aabbccddeexxxxaa';
+    function uniq1(str) {
+        // return str.replace(/([a-z])(\1){1,}/g, '$1');
+        return str.replace(/(.)(?=\1)/g, '');
+    }
+    console.log(uniq1(str));
+
+    // 数组方式
+    function uniq2(str) {
+        let arr = str.split('');
+        let newArr = [arr[0]];
+        for(let i = 1; i < arr.length; i++) {
+            let cur = arr[i];
+            if (cur !== newArr[newArr.length - 1]) {
+                newArr.push(cur);
+            }
+        }
+        return newArr.join('');
+    }
+    console.log(uniq2(str));
+</script>
+</html>

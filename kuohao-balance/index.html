@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>检测字符串中括号表达式是否平衡</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+    function match(a, b) {
+        return (a === '(' && b === ')') || (a === ')' && b === '(') || (a === '[' && b === ']') || (a === ']' && b === '[');
+    }
+
+
+    // 方法一
+    function balance(str) {
+        if (str.length % 2 === 0) {
+            let len = str.length;
+            for (let i = 0, j = len - 1; i < len / 2; i++, j--) {
+                if (!match(str[i], str[j])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    console.log(balance(']()()()[')); // true
+
+    // 方法二
+    function is_balance(str) {
+        return [...str].reduce((stack, c) => {
+            match(stack[stack.length - 1], c) ?
+                stack.pop() : stack.push(c);
+            return stack;
+        }, []).length === 0;
+    }
+</script>
+</html>
