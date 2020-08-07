@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>责任链模式</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+    /*
+    *业务场景：有个登录流程，我们需要验证条件一，条件二， 条件三， 如果验证成功，我们就成功，否则失败
+    * 我们应该如何来实现呢，你可以if else 、switch case、甚至用在一个方法多次调用不同的验证方法，但是这样无异
+    * 都有一个弊端耦合性太高了， 如果我们有新增条件，就需要修改主方法，得不偿失。
+    * 那就引入责任链模式eg.
+    * */
+    /*
+    * 责任链模式：
+    * 为请求创建了一个接收者对象的链，这种模式给予请求的类型，对请求的发送者和接收者进行解藕
+    * 主要解决：避免请求发送者和接受者藕合在一起，让多个对象都有可能接收请求，将这些对象连接成一条链
+    * 并沿着这条链请求，直到有对象处理它为止
+    * */
+
+    class ChainNode {
+        constructor(main, next, options) {
+            this.main = main;
+            this.next = next;
+            this.options = options
+        }
+        start () {
+            let res = this.main(...arguments)
+            res && this.next.start(...arguments)
+        }
+        setNext (callback) {
+            this.next = callback
+        }
+    }
+
+    class ResponsibilityChain {
+        constructor() {
+            this.chainNodes = {} // 责任节点
+        }
+        getChainNodes(chainName) { // 获取责任节点
+            return this.chainNodes[chainName]
+        }
+        setChainNodes(name, chainNode) { // 设置责任节点
+            this.chainNodes[name] = chainNode
+        }
+        insertChainNode () {}
+        chainConstitute(array) { // 链
+            for (let index = 0; index < array.length; index++) {
+                let element = this.chainNodes[array[index]]
+                let next = this.chainNodes[array[index + 1]]
+                element.next = next
+            }
+        }
+    }
+
+    function template_fn1 (tmp) {
+        console.log('配置1', tmp)
+        if ('have配置1') {
+            return true
+        }
+        //
+        alert('输入配置1')
+        return false
+    }
+    function template_fn2 (tmp) {
+        console.log('配置2', tmp)
+        return true
+    }
+    function template_fn3 (tmp) {
+        console.log('配置3', tmp)
+        return false
+    }
+    function template_fn4 (tmp) {
+        console.log('配置4', tmp)
+        return false
+    }
+​
+let responsibilityChain = new ResponsibilityChain();
+    responsibilityChain.setChainNodes('chainNode_1', new ChainNode(template_fn1));
+    responsibilityChain.setChainNodes('chainNode_2', new ChainNode(template_fn2));
+    responsibilityChain.setChainNodes('chainNode_3', new ChainNode(template_fn3));
+    responsibilityChain.setChainNodes('chainNode_4', new ChainNode(template_fn4));
+    responsibilityChain.chainConstitute(['chainNode_1', 'chainNode_2', 'chainNode_3', 'chainNode_4']);
+    let firstNode = responsibilityChain.getChainNodes('chainNode_1');
+    firstNode.start('handleRequest')
+​
+    // 配置1 handleRequest
+    // 配置2 handleRequest
+    // 配置3 handleRequest
+</script>
+</html>
