@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>koa核心思想洋葱模型</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+    const App = {
+
+      // 中间件存储数组
+      middlewares: [],
+
+      // 存储方法
+      use(fn) {
+        this.middlewares.push(fn)
+      }
+    };
+
+    App.compose = function (middlewares) {
+      return async function () {
+
+        await dispatch(0);
+
+        async function dispatch(idx) {
+
+          if(idx === App.middlewares.length) return;
+
+          const fn = middlewares[idx];
+
+          await fn(function next() {
+
+            dispatch(idx+1);
+          })
+        }
+      }
+
+    };
+
+    App.use(function (next) {
+        console.log(1);
+        next();
+        console.log(1.1);
+    });
+    App.use(function (next) {
+        console.log(2);
+        next();
+        console.log(2.2);
+    });
+    App.use(function (next) {
+        console.log(3);
+        next();
+        console.log(3.3);
+    });
+    App.compose(App.middlewares)();
+</script>
+</html>
