@@ -1,0 +1,28 @@
+<!--todo-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>多参数相加</title>
+</head>
+<body>
+<script>
+    function add() {
+      console.log([...arguments]);
+      console.log(Array.from((arguments)));
+      for(var item of arguments) {
+        console.log(item);
+      }
+       var a = Array.from((arguments)).reduce(function (total, c) {
+            return total + c;
+        }, 0);
+       console.log(a);
+    }
+    function show(...a) {
+      console.log(a);
+    }
+    add(1,2,3,4,5)
+    show(1,2,3,4,5)
+</script>
+</body>
+</html>

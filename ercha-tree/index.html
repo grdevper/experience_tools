@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>二叉树</title>
+</head>
+<body></body>
+<script type="text/javascript">
+    function Tree() {
+      const Tree_struct = function (dom) {
+         this.data = dom;
+         this.lchild = null;
+         this.rchild = null;
+      };
+      this.creatTree = function () {
+        const biTree = new Tree_struct('a');
+        biTree.lchild = new Tree_struct('b');
+        biTree.rchild = new Tree_struct('c');
+        biTree.lchild.lchild = new Tree_struct('e');
+        biTree.rchild.rchild = new Tree_struct('f');
+        biTree.lchild.lchild.lchild = new Tree_struct('m');
+        biTree.rchild.rchild.rchild = new Tree_struct('n');
+        return biTree;
+      }
+    }
+
+    // 前序遍历
+    function preOrder(tree) {
+      if(tree == null) return;
+      console.log(tree.data);
+      preOrder(tree.lchild);
+      preOrder(tree.rchild);
+    }
+
+    // 中序遍历
+    function midOrder(tree) {
+      if(tree == null) return;
+      midOrder(tree.lchild);
+      console.log(tree.data);
+      midOrder(tree.rchild);
+    }
+
+    // 后序遍历
+    function behindOrder(tree) {
+      if(tree == null) return;
+      behindOrder(tree.lchild);
+      behindOrder(tree.rchild);
+      console.log(tree.data);
+    }
+
+    // 后进先出(前序遍历)栈 深度优先
+   function deepSearch(tree) {
+       const stack = [];
+       stack.push(tree);
+       while (stack.length !== 0) {
+          const node = stack.pop();
+          console.log(node.data);
+          if(node.rchild) {
+             stack.push(node.rchild);
+          }
+          if(node.lchild) {
+              stack.push(node.lchild);
+          }
+       }
+   }
+
+   // 广度优先(先进先出)队列
+    function BreadSearch(biTree) {
+       const queue = [];
+       queue.push(biTree);
+       while (queue.length !== 0) {
+         const node = node.shift();
+         console.log(node.data);
+         if(node.lchild) {
+            queue.push(node.lchild);
+         }
+         if(node.rchild) {
+             queue.push(node.rchild);
+         }
+       }
+    }
+
+
+    const data = new Tree().creatTree();
+   // preOrder(data);
+    //console.log('========>');
+    // console.log('===========');
+    // midOrder(data);
+    // console.log('===========');
+    // behindOrder(data);
+    deepSearch(data);
+    console.log('======');
+    BreadSearch(data);
+</script>
+</html>

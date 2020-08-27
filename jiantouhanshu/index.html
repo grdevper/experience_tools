@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>箭头函数this指向</title>
+</head>
+<body>
+<script>
+  var a = {
+    b:1,
+    c: function () {
+      //继承的父作用域
+     return () => console.log(this);  // a对象下定义，指向a
+    }
+  };
+
+  var h = {
+    b:1,
+    j: function () {
+      return function T() { // window 调用执行
+        console.log(this);
+      }
+    }
+  };
+  a.c()();
+  h.j()();
+  // 箭头函数this指向定义时的对象即宿主对象， 普通函数调用时的即直接调用者，严格模式指向undefined
+</script>
+</body>
+</html>
