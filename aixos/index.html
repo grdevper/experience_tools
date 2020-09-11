@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>axios封装</title>
+</head>
+<body>
+
+</body>
+<script>
+  import axios from 'axios';
+  import Base64 from 'js-base64';
+  // @ts-ignore
+  import {host} from '@config/custom'
+
+  const loginout_url = `${host}/loginout`;
+
+  // 请求参数类型
+  interface requestParams {
+    type?: string, // 请求方式get
+      url: string,  // 请求地址
+      option?: any, // 自定义option
+      data?: any, // 传入的数据
+      isUrlJoinHeader?: boolean, // 是否将header自定义验证信息带在请求地址上
+  };
+
+  // 默认参数
+  const defaultParams: requestParams = {
+    url:'',
+    type: 'get',
+    isUrlJoinHeader: false,
+    option: {},
+  }
+
+  // 创建axios
+  const as = axios.create({
+    baseURL: '/',
+    withCredentials: false,
+    responseType: 'json',
+    headers: {
+      "Content-Type": "application/json",
+    },
+    timeout: 8000
+  });
+
+  const getHeader = () => {
+    // 默认请求头
+    const header = {
+      'Content-Type': 'application/json',
+      _tk: "-1",
+      _uid: "-1",
+      _un: "-1",
+      _type: "-1",
+      _oid: "-1",
+      _org_type: "-1",
+      _menu_id: "-1",
+      _org_name: "-1",
+      "x-csrf-token": "",
+      _region_id: 3,
+    }
+
+    if(typeof window !== undefined) {
+      header._tk = window.sessionStorage.getItem("_tk") || "-1";
+      header._uid =  window.sessionStorage.getItem("_uid") || "-1";
+      header._un =  window.sessionStorage.getItem("_un") || '';
+      header._type = window.sessionStorage.getItem("_type") || "0";
+      header._oid = window.sessionStorage.getItem("_oid") || "1";
+      header._org_type = window.sessionStorage.getItem("_org_type") ||  "-1";
+      header._menu_id =  window.sessionStorage.getItem("_menu_id") || "";
+      header._org_name = window.sessionStorage.getItem("_org_name") || "-1";
+      header['x-csrf-token'] = window.sessionStorage.getItem("csrf") || "";
+    }
+    return header;
+  }
+
+  // 登录失效清除用户信息
+  const clearLoginInfo = () => {
+    window.sessionStorage.removeItem("_tk");
+    window.sessionStorage.removeItem("_uid");
+    window.sessionStorage.removeItem("_un");
+    window.sessionStorage.removeItem("_type");
+    window.sessionStorage.removeItem("_oid");
+    window.sessionStorage.removeItem("_on");
+    window.sessionStorage.removeItem("org-list");
+    window.sessionStorage.removeItem("current-org");
+    window.sessionStorage.removeItem("_mu");
+    window.sessionStorage.removeItem("userInfo");
+    window.sessionStorage.removeItem("csrf");
+  }
+
+  // 处理请求
+  const handleRequest = (params: requestParams) => {
+    const {type, url, option, data, isUrlJoinHeader} = params;
+    let _url = url;
+    if(isUrlJoinHeader){
+      const header = getHeader();
+      const headerStr = encodeURIComponent(Base64.encode(JSON.stringify(header)));
+      _url = url.indexOf('?') > 0 ? (`${url}&_h=${headerStr}`) : (`${url}?_h=${headerStr}`);
+    }
+    switch (type) {
+      case 'post':
+        return as.post(_url, data, option);
+      case "put":
+        return as.put(_url, data, option);
+      case 'delete':
+        return as.delete(_url, {params: data, headers: option && option.headers});
+      case 'get':
+      default:
+        return as.get(_url, { params: data, headers: option && option.headers});
+    }
+  }
+
+  const wrongCodes = [
+    9905, 119, 122, 141, 9900, 9908
+  ];
+
+  const loginout = () => {
+    request({url: loginout_url, type: 'post'}).then(response => {
+      let { data: body } = response,
+        { code } = body;
+      if (code === 0) {
+        if (typeof window !== "undefined") {
+          clearLoginInfo();
+          window.location.href = "/login";
+        }
+      }
+    });
+  };
+
+  as.interceptors.response.use(
+    // @ts-ignore
+    response => {
+      if (response && response.data) {
+        const {code} = response.data;
+        if (wrongCodes.indexOf(code) !== -1) {
+          loginout();
+        } else {
+          return response;
+        }
+      }
+    },
+    // @ts-ignore
+    (error, headers) => {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.code
+      ) {
+        if (wrongCodes.indexOf(error.response.data.code) !== -1) {
+          loginout();
+        }
+      }
+      throw new Error(
+        `请求异常: ${
+          error.message === "timeout of 8000ms exceeded"
+            ? "请求超时"
+            : error.message
+          }`
+      );
+    }
+  );
+
+  const request = (params: requestParams) => {
+    const _params = {...defaultParams, ...params};
+    return handleRequest(_params).then(res => {
+      return Promise.resolve(res.data);
+    }).catch(error => {
+      console.error(error);
+      return Promise.reject(error);
+    })
+  }
+
+  export default request
+
+</script>
+</html>
