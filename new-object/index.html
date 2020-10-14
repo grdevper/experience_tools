@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>new 创建对象 new的实现</title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+  function Animal(params) {
+    this.name = 'test';
+    return params;
+  }
+  // new Animal();
+  // console.log(new Animal);  // Animal {name: 'test'}
+  // console.log(new Animal()); // Animal {name: 'test'}
+  console.log(new Animal({a:1})) // {}
+
+  function _new() {
+    var Func = [].shift.call(arguments);
+    var obj = Object.create(Func.prototype);
+    var res = Func.apply(obj, arguments);
+    return res || obj
+  }
+
+  var a = function (name) {
+    var obj = {};
+    obj.__proto__ = Animal.prototype;
+    var result = Animal.call(obj, name)
+    if(Object.prototype.toString.call(result) == "[object Object]" ){
+      return result
+    }else{
+      return obj;
+    }
+  }('test');
+  console.log(a);
+</script>
+</html>
