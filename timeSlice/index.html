@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>时间分片</title>
+</head>
+<style type="text/css">
+    .content{
+       height: 400px;
+       overflow: auto;
+    }
+</style>
+<body>
+<ul class="content" id="content"></ul>
+</body>
+<script type="text/javascript">
+    // let now = Date.now();
+    // // 插入十万条数据
+    // const total = 100000;
+    // // 获取容器
+    // let ul = document.getElementById('content');
+    // // 将数据插入容器中
+    // for (let i = 0; i < total; i++) {
+    //     let li = document.createElement('li');
+    //     li.innerText = Math.random() * total
+    //     ul.appendChild(li);
+    // }
+
+    let ul = document.getElementById('content');
+    // 插入十万条数据
+    let total = 100000;
+    // 一次插入 20 条
+    let once = 20;
+    //总页数
+    let page = total/once
+    //每条记录的索引
+    let index = 0;
+    //循环加载数据
+    function loop(curTotal,curIndex){
+        console.log(curTotal);
+        if(curTotal <= 0){
+            console.log('11111111')
+            return false;
+        }
+        //每页多少条
+        let pageCount = Math.min(curTotal , once);
+        // setTimeout(()=>{
+        //     for(let i = 0; i < pageCount; i++){
+        //         let li = document.createElement('li');
+        //         li.innerText = curIndex + i + ' : ' + ~~(Math.random() * total)
+        //         ul.appendChild(li)
+        //     }
+        //     loop(curTotal - pageCount,curIndex + pageCount)
+        // },0)
+
+        // window.requestAnimationFrame(function(){
+        //     for(let i = 0; i < pageCount; i++){
+        //         let li = document.createElement('li');
+        //         li.innerText = curIndex + i + ' : ' + ~~(Math.random() * total)
+        //         ul.appendChild(li)
+        //     }
+        //     loop(curTotal - pageCount,curIndex + pageCount)
+        // })
+
+        window.requestAnimationFrame(function(){
+            let fragment = document.createDocumentFragment();
+            for(let i = 0; i < pageCount; i++){
+                let li = document.createElement('li');
+                li.innerText = curIndex + i + ' : ' + ~~(Math.random() * total)
+                fragment.appendChild(li)
+            }
+            ul.appendChild(fragment)
+            loop(curTotal - pageCount,curIndex + pageCount)
+        })
+    }
+    loop(total, index);
+</script>
+</html>
